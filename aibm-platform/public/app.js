@@ -151,6 +151,10 @@ function initializeViewContent() {
     injectAiSections();
 }
 
+// ==================================================================
+// PHẦN CODE BỊ THIẾU BẮT ĐẦU TỪ ĐÂY
+// ==================================================================
+
 function addEventListeners() {
     authForm.addEventListener('submit', handleAuthSubmit);
     authToggleBtn.addEventListener('click', toggleAuthMode);
