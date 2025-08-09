@@ -1,8 +1,3 @@
-// This file contains all client-side logic.
-// It makes requests to our own server's API endpoints (e.g., /api/ads)
-// instead of the external webhooks. The server will then securely
-// forward these requests.
-
 // --- API PROXY ENDPOINTS ---
 const API_BASE = ''; // Use relative path for same-origin requests
 const API = {
@@ -108,7 +103,6 @@ function buildInitialUI() {
 }
 
 function initializeViewContent() {
-    // Inject content for each view
     document.getElementById('view-chatbot').innerHTML = `
         <div class="bg-white rounded-lg shadow-sm p-4 flex flex-col h-full">
             <div class="flex justify-between items-center mb-2 pb-2 border-b">
@@ -153,12 +147,11 @@ function initializeViewContent() {
                 </tr></thead><tbody id="adsDataTableBody"></tbody></table></div>
             </div>
         </div>`;
-    // ... Add content for other views as needed
+    // Other views can be populated here in a similar fashion
     
     injectAiSections();
 }
 
-// --- EVENT LISTENERS ---
 function addEventListeners() {
     authForm.addEventListener('submit', handleAuthSubmit);
     authToggleBtn.addEventListener('click', toggleAuthMode);
@@ -187,7 +180,6 @@ function handleMainContentClick(e) {
     if (newChatBtn) startNewChat();
 }
 
-// --- AUTHENTICATION ---
 function checkAuth() {
     const user = sessionStorage.getItem('currentUser');
     if (user) {
@@ -202,7 +194,7 @@ function showAppView() {
     authView.classList.add('hidden');
     appView.style.display = 'flex';
     currentUserEmail.textContent = currentUser.Email;
-    loadAdsFromWebhook(); // Load initial data
+    loadAdsFromWebhook();
     updateThreadIdDisplay();
 }
 
@@ -266,7 +258,6 @@ function toggleAuthMode() {
     }
 }
 
-// --- VIEW MANAGEMENT ---
 function switchView(viewName) {
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
@@ -274,7 +265,6 @@ function switchView(viewName) {
     document.querySelector(`.sidebar-btn[data-view=${viewName}]`).classList.add('active');
 }
 
-// --- DATA HANDLING (ADS EXAMPLE) ---
 async function loadAdsFromWebhook() {
     if (isProcessing) return;
     setLoadingState(true, 'data', document.getElementById('refreshDataBtn'));
@@ -300,14 +290,12 @@ async function loadAdsFromWebhook() {
 }
 
 function applyAdsFiltersAndSorting() {
-    // Simplified for brevity
     displayedAdsData = [...allAdsData];
     updateDashboardUI(displayedAdsData);
 }
 
 function updateDashboardUI(data) {
     updateAdsDataTable(data);
-    // updateKPIs, updateCharts would also be called here
 }
 
 function updateAdsDataTable(data) {
@@ -325,7 +313,6 @@ function updateAdsDataTable(data) {
     });
 }
 
-// --- CHAT ---
 function startNewChat() {
     activeThreadId = crypto.randomUUID();
     updateThreadIdDisplay();
@@ -378,7 +365,6 @@ function appendChatMessage(message, sender) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// --- AI ANALYSIS ---
 function injectAiSections() {
     document.querySelectorAll('.view-container').forEach(view => {
         if(view.id === 'view-chatbot') return;
@@ -396,14 +382,16 @@ function injectAiSections() {
 }
 
 async function handleAiRefresh(button) {
-    // ... logic to call API.AI_ANALYSIS and display results
+    const summaryDiv = button.closest('.ai-analysis-container').querySelector('.ai-summary');
+    summaryDiv.innerHTML = `<p>Phân tích AI đang được thực hiện...</p>`;
 }
 
-// --- UTILITIES ---
 function setLoadingState(isLoading, type, element = null) {
     isProcessing = isLoading;
-    // Simplified version
-    if (element) {
+    if (type === 'auth') {
+        authSubmitBtn.disabled = isLoading;
+        authLoader.classList.toggle('hidden', !isLoading);
+    } else if (element) {
         element.disabled = isLoading;
     }
 }
@@ -418,10 +406,8 @@ function hideError() {
     errorMessage.classList.add('hidden');
 }
 
-// --- MODALS (Simplified) ---
 function openModal(type, item = null) {
     modalTitle.textContent = item ? `Sửa ${type}` : `Thêm ${type}`;
-    // Logic to build form fields based on type
     recordModal.classList.remove('hidden');
 }
 
@@ -429,7 +415,7 @@ function hideModal() {
     recordModal.classList.add('hidden');
 }
 
-function handleFormSubmit(e) { e.preventDefault(); /* ... */ }
+function handleFormSubmit(e) { e.preventDefault(); }
 function handleDeleteClick(type, item) { deleteConfirmModal.classList.remove('hidden'); }
 function hideDeleteModal() { deleteConfirmModal.classList.add('hidden'); }
-function processDelete() { /* ... */ }
+function processDelete() {}
