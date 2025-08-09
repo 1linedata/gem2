@@ -147,7 +147,6 @@ function initializeViewContent() {
                 </tr></thead><tbody id="adsDataTableBody"></tbody></table></div>
             </div>
         </div>`;
-    // Other views can be populated here in a similar fashion
     
     injectAiSections();
 }
