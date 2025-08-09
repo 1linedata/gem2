@@ -22,7 +22,19 @@ const forwardRequest = async (url, body) => {
     });
     const data = await response.json();
     if (!response.ok) {
-        const errorMessage = data[0]?.output?.message || data.message || 'Webhook operation failed';
+        // Attempt to parse nested error messages from the webhook's response
+        const nestedOutput = data[0]?.output;
+        let errorMessage = 'Webhook operation failed';
+        if (nestedOutput) {
+            try {
+                const parsedOutput = JSON.parse(nestedOutput);
+                errorMessage = parsedOutput.message || errorMessage;
+            } catch (e) {
+                errorMessage = nestedOutput; // If it's not JSON, use the raw string
+            }
+        } else {
+            errorMessage = data.message || errorMessage;
+        }
         throw new Error(errorMessage);
     }
     return data;
@@ -36,7 +48,8 @@ app.post('/api/users/:action', async (req, res) => {
     const prompt = `task: ${action} - data: ${JSON.stringify(req.body)}`;
     try {
         const data = await forwardRequest(process.env.USER_DATA_WEBHOOK_URL, { prompt });
-        const output = JSON.parse(data[0]?.output || data.output || '{}');
+        const outputString = data[0]?.output || data.output || '{}';
+        const output = JSON.parse(outputString);
         res.status(200).json(output);
     } catch (error) {
         res.status(500).json({ message: error.message });
